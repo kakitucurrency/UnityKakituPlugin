@@ -1,94 +1,94 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using NanoPlugin;
+using KakituPlugin;
 
 public class TestUtils : MonoBehaviour
 {
   // Start is called before the first frame update
   void Start()
   {
-    // Validate nano/raw functions
-    if (!NanoUtils.ValidateNano("100.123"))
+    // Validate kshs/raw functions
+    if (!KakituUtils.ValidateNano("100.123"))
     {
-      Debug.Log("Error validating nano");
+      Debug.Log("Error validating kshs");
       return;
     }
 
-    if (!NanoUtils.ValidateNano("100,123"))
+    if (!KakituUtils.ValidateNano("100,123"))
     {
-      Debug.Log("Error validating nano");
+      Debug.Log("Error validating kshs");
       return;
     }
 
-    if (!NanoUtils.ValidateNano("340282366.920938463463374607431768211455"))
+    if (!KakituUtils.ValidateNano("340282366.920938463463374607431768211455"))
     {
-      Debug.Log("Error validating nano");
+      Debug.Log("Error validating kshs");
       return;
     }
 
-    if (!NanoUtils.ValidateNano("0.1231231"))
+    if (!KakituUtils.ValidateNano("0.1231231"))
     {
-      Debug.Log("Error validating nano");
+      Debug.Log("Error validating kshs");
       return;
     }
 
-    if (!NanoUtils.ValidateNano(".1223"))
+    if (!KakituUtils.ValidateNano(".1223"))
     {
-      Debug.Log("Error validating nano");
+      Debug.Log("Error validating kshs");
       return;
     }
 
-    if (!NanoUtils.ValidateNano(",1223"))
+    if (!KakituUtils.ValidateNano(",1223"))
     {
-      Debug.Log("Error validating nano");
+      Debug.Log("Error validating kshs");
       return;
     }
 
-    if (NanoUtils.ValidateNano(".122.3"))
+    if (KakituUtils.ValidateNano(".122.3"))
     {
       Debug.Log("Error validating nano, 2 decimal points");
       return;
     }
 
-    if (!NanoUtils.ValidateRaw("100"))
+    if (!KakituUtils.ValidateRaw("100"))
     {
       Debug.Log("Error validating raw");
       return;
     }
 
-    if (!NanoUtils.ValidateRaw("340282366920938463463374607431768211455"))
+    if (!KakituUtils.ValidateRaw("340282366920938463463374607431768211455"))
     {
       Debug.Log("Error validating raw");
       return;
     }
 
-    if (!NanoUtils.ValidateRaw("0001"))
+    if (!KakituUtils.ValidateRaw("0001"))
     {
       Debug.Log("Error validating raw");
       return;
     }
 
-    if (NanoUtils.ValidateRaw("100.123"))
+    if (KakituUtils.ValidateRaw("100.123"))
     {
       Debug.Log("Error validating raw");
       return;
     }
 
-    if (NanoUtils.ValidateRaw("100@123"))
+    if (KakituUtils.ValidateRaw("100@123"))
     {
       Debug.Log("Error validating raw");
       return;
     }
 
-    if (NanoUtils.ValidateRaw("1111111111111111111111111111111111111111111111111111111111"))
+    if (KakituUtils.ValidateRaw("1111111111111111111111111111111111111111111111111111111111"))
     {
       Debug.Log("Error validating raw");
       return;
     }
 
     // 1 above max raw
-    if (NanoUtils.ValidateRaw("340282366920938463463374607431768211456"))
+    if (KakituUtils.ValidateRaw("340282366920938463463374607431768211456"))
     {
       Debug.Log("Error validating raw");
       return;
@@ -96,198 +96,198 @@ public class TestUtils : MonoBehaviour
 
     // Raw to nano
     var raw = "10000000000000000000000000000000";
-    var nano = NanoUtils.RawToNano(raw);
-    if (!nano.Equals("10.0"))
+    var kshs = KakituUtils.RawToNano(raw);
+    if (!kshs.Equals("10.0"))
     {
-      Debug.Log("Error converting raw to nano");
+      Debug.Log("Error converting raw to kshs");
       return;
     }
 
     raw = "1000000000000000000000000000000";
-    nano = NanoUtils.RawToNano(raw);
-    if (!nano.Equals("1.0"))
+    kshs = KakituUtils.RawToNano(raw);
+    if (!kshs.Equals("1.0"))
     {
-      Debug.Log("Error converting raw to nano");
+      Debug.Log("Error converting raw to kshs");
       return;
     }
 
     raw = "100000000000000000000000000000";
-    nano = NanoUtils.RawToNano(raw);
-    if (!nano.Equals("0.1"))
+    kshs = KakituUtils.RawToNano(raw);
+    if (!kshs.Equals("0.1"))
     {
-      Debug.Log("Error converting raw to nano");
+      Debug.Log("Error converting raw to kshs");
       return;
     }
 
     raw = "10000000000000000000000000000";
-    nano = NanoUtils.RawToNano(raw);
-    if (!nano.Equals("0.01"))
+    kshs = KakituUtils.RawToNano(raw);
+    if (!kshs.Equals("0.01"))
     {
-      Debug.Log("Error converting raw to nano");
+      Debug.Log("Error converting raw to kshs");
       return;
     }
 
     raw = "100000000000000000000000000";
-    nano = NanoUtils.RawToNano(raw);
-    if (!nano.Equals("0.0001"))
+    kshs = KakituUtils.RawToNano(raw);
+    if (!kshs.Equals("0.0001"))
     {
-      Debug.Log("Error converting raw to nano");
+      Debug.Log("Error converting raw to kshs");
       return;
     }
 
     raw = "100";
-    nano = NanoUtils.RawToNano(raw);
-    if (!nano.Equals("0.0000000000000000000000000001"))
+    kshs = KakituUtils.RawToNano(raw);
+    if (!kshs.Equals("0.0000000000000000000000000001"))
     {
-      Debug.Log("Error converting raw to nano");
+      Debug.Log("Error converting raw to kshs");
       return;
     }
 
     raw = "1";
-    nano = NanoUtils.RawToNano(raw);
-    if (!nano.Equals("0.000000000000000000000000000001"))
+    kshs = KakituUtils.RawToNano(raw);
+    if (!kshs.Equals("0.000000000000000000000000000001"))
     {
-      Debug.Log("Error converting raw to nano");
+      Debug.Log("Error converting raw to kshs");
       return;
     }
 
     // Nano to raw
-    nano = "10.0";
-    raw = NanoUtils.NanoToRaw(nano);
+    kshs = "10.0";
+    raw = KakituUtils.NanoToRaw(nano);
     if (!raw.Equals("10000000000000000000000000000000"))
     {
-      Debug.Log("Error converting nano to raw");
+      Debug.Log("Error converting kshs to raw");
       return;
     }
 
-    nano = "10";
-    raw = NanoUtils.NanoToRaw(nano);
+    kshs = "10";
+    raw = KakituUtils.NanoToRaw(nano);
     if (!raw.Equals("10000000000000000000000000000000"))
     {
-      Debug.Log("Error converting nano to raw");
+      Debug.Log("Error converting kshs to raw");
       return;
     }
 
-    nano = "1.0";
-    raw = NanoUtils.NanoToRaw(nano);
+    kshs = "1.0";
+    raw = KakituUtils.NanoToRaw(nano);
     if (!raw.Equals("1000000000000000000000000000000"))
     {
-      Debug.Log("Error converting nano to raw");
+      Debug.Log("Error converting kshs to raw");
       return;
     }
 
-    nano = "0.1";
-    raw = NanoUtils.NanoToRaw(nano);
+    kshs = "0.1";
+    raw = KakituUtils.NanoToRaw(nano);
     if (!raw.Equals("100000000000000000000000000000"))
     {
-      Debug.Log("Error converting nano to raw");
+      Debug.Log("Error converting kshs to raw");
       return;
     }
 
-    nano = ".1";
-    raw = NanoUtils.NanoToRaw(nano);
+    kshs = ".1";
+    raw = KakituUtils.NanoToRaw(nano);
     if (!raw.Equals("100000000000000000000000000000"))
     {
-      Debug.Log("Error converting nano to raw");
+      Debug.Log("Error converting kshs to raw");
       return;
     }
 
-    nano = "00000.1";
-    raw = NanoUtils.NanoToRaw(nano);
+    kshs = "00000.1";
+    raw = KakituUtils.NanoToRaw(nano);
     if (!raw.Equals("100000000000000000000000000000"))
     {
-      Debug.Log("Error converting nano to raw");
+      Debug.Log("Error converting kshs to raw");
       return;
     }
 
-    nano = "0.01";
-    raw = NanoUtils.NanoToRaw(nano);
+    kshs = "0.01";
+    raw = KakituUtils.NanoToRaw(nano);
     if (!raw.Equals("10000000000000000000000000000"))
     {
-      Debug.Log("Error converting nano to raw");
+      Debug.Log("Error converting kshs to raw");
       return;
     }
 
-    nano = "0.000000000000000000000000000001";
-    raw = NanoUtils.NanoToRaw(nano);
+    kshs = "0.000000000000000000000000000001";
+    raw = KakituUtils.NanoToRaw(nano);
     if (!raw.Equals("1"))
     {
-      Debug.Log("Error converting nano to raw");
+      Debug.Log("Error converting kshs to raw");
       return;
     }
 
     // Test localization of using a comma
-    nano = "0,01";
-    raw = NanoUtils.NanoToRaw(nano);
+    kshs = "0,01";
+    raw = KakituUtils.NanoToRaw(nano);
     if (!raw.Equals("10000000000000000000000000000"))
     {
-      Debug.Log("Error converting nano to raw");
+      Debug.Log("Error converting kshs to raw");
       return;
     }
 
-    // Test NanoAmount
-    if (!((new NanoAmount("1") + new NanoAmount("2")).Equals(new NanoAmount("3")))) {
+    // Test KakituAmount
+    if (!((new KakituAmount("1") + new KakituAmount("2")).Equals(new KakituAmount("3")))) {
       Debug.Log("Error with adding");
       return;
     }
 
-    if (!((new NanoAmount("2") - new NanoAmount("1")).Equals(new NanoAmount("1")))) {
+    if (!((new KakituAmount("2") - new KakituAmount("1")).Equals(new KakituAmount("1")))) {
       Debug.Log("Error with subtracting");
       return;
     }
 
-    if (!(new NanoAmount("3000") > new NanoAmount("2000")))
+    if (!(new KakituAmount("3000") > new KakituAmount("2000")))
     {
       Debug.Log("Error with greater");
       return;
     }
 
-    if ((new NanoAmount("2000") > new NanoAmount("2000")))
+    if ((new KakituAmount("2000") > new KakituAmount("2000")))
     {
       Debug.Log("Error with greater");
       return;
     }
 
-    if ((new NanoAmount("1999") > new NanoAmount("2000")))
+    if ((new KakituAmount("1999") > new KakituAmount("2000")))
     {
       Debug.Log("Error with greater");
       return;
     }
 
-    if (!(new NanoAmount("3000") >= new NanoAmount("2000")))
+    if (!(new KakituAmount("3000") >= new KakituAmount("2000")))
     {
       Debug.Log("Error with greater or equal");
       return;
     }
 
-    if (!(new NanoAmount("2000") >= new NanoAmount("2000")))
+    if (!(new KakituAmount("2000") >= new KakituAmount("2000")))
     {
       Debug.Log("Error with greater or equal");
       return;
     }
 
-    if ((new NanoAmount("1999") > new NanoAmount("2000")))
+    if ((new KakituAmount("1999") > new KakituAmount("2000")))
     {
       Debug.Log("Error with greater or equal");
       return;
     }
 
-    var amount = new NanoAmount(100);
+    var amount = new KakituAmount(100);
 
-    byte[] bytes = NanoUtils.HexStringToByteArray("E989DE925A4EDEE45447158557AD1409450315491F147F4AAA8F37DCA355354A");
+    byte[] bytes = KakituUtils.HexStringToByteArray("E989DE925A4EDEE45447158557AD1409450315491F147F4AAA8F37DCA355354A");
 
-    byte[] b = NanoUtils.AddressToPublicKeyByteArray("nano_3kqdiqmqiojr1aqqj51aq8bzz5jtwnkmhb38qwf3ppngo8uhhzkdkn7up7rp");
-    string s1 = NanoUtils.SignHash("E989DE925A4EDEE45447158557AD1409450315491F147F4AAA8F37DCA355354A", bytes);
-    string s2 = NanoUtils.PublicKeyToAddress(bytes);
-    string s3 = NanoUtils.ByteArrayToHexString(bytes);
+    byte[] b = KakituUtils.AddressToPublicKeyByteArray("kshs_3kqdiqmqiojr1aqqj51aq8bzz5jtwnkmhb38qwf3ppngo8uhhzkdkn7up7rp");
+    string s1 = KakituUtils.SignHash("E989DE925A4EDEE45447158557AD1409450315491F147F4AAA8F37DCA355354A", bytes);
+    string s2 = KakituUtils.PublicKeyToAddress(bytes);
+    string s3 = KakituUtils.ByteArrayToHexString(bytes);
 
-    var prvKey = NanoUtils.GeneratePrivateKey();
+    var prvKey = KakituUtils.GeneratePrivateKey();
     var password = "cheese_cake" + Random.value;
-    var filename = "privateKey1.nano";
+    var filename = "privateKey1.kshs";
 
-    NanoUtils.SavePrivateKey(NanoUtils.ByteArrayToHexString(prvKey), filename, password);
-    var originalPrivateKey = NanoUtils.ByteArrayToHexString(prvKey);
-    var extractedPrivateKey = NanoUtils.LoadPrivateKey(filename, password);
+    KakituUtils.SavePrivateKey(KakituUtils.ByteArrayToHexString(prvKey), filename, password);
+    var originalPrivateKey = KakituUtils.ByteArrayToHexString(prvKey);
+    var extractedPrivateKey = KakituUtils.LoadPrivateKey(filename, password);
     if (!originalPrivateKey.Equals(extractedPrivateKey))
     {
       Debug.Log("Error decrypting privateKey");

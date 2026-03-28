@@ -17,7 +17,7 @@ const nodeWs = require("./websocket_node");
 const nodeUrl =
   "http://" + config.node.rpc.address + ":" + config.node.rpc.port;
 
-// Send request to the RPC server of the node and record response
+// Send request to the RPC server of the Kakitu node and record response
 const send = (json_string) => {
   return new Promise((resolve) => {
     fetch(nodeUrl, {

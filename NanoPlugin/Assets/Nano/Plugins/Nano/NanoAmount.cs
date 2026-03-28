@@ -1,46 +1,46 @@
 ﻿using System;
 using System.Numerics;
 
-namespace NanoPlugin
+namespace KakituPlugin
 {
-  public class NanoAmount
+  public class KakituAmount
   {
     public static BigInteger max = BigInteger.Parse("340282366920938463463374607431768211455");
 
-    public static NanoAmount MAX_VALUE = new NanoAmount(max);
+    public static KakituAmount MAX_VALUE = new KakituAmount(max);
 
     private BigInteger rawValue;
 
     /**
-     * Creates a NanoAmount from a given {@code raw} value.
+     * Creates a KakituAmount from a given {@code raw} value.
      *
      * @param rawValue the raw value
      */
-    public NanoAmount(int rawValue)
+    public KakituAmount(int rawValue)
     {
       if (rawValue < 0)
         throw new ArgumentException("Raw value cannot be negative.");
     }
 
     /**
-     * Creates a NanoAmount from a given {@code raw} value.
+     * Creates a KakituAmount from a given {@code raw} value.
      *
      * @param rawValue the raw value
      */
-    public NanoAmount(string rawValue)
+    public KakituAmount(string rawValue)
     {
-      if (NanoUtils.ValidateRaw(rawValue))
+      if (KakituUtils.ValidateRaw(rawValue))
       {
         this.rawValue = BigInteger.Parse(rawValue);
       }
     }
 
     /**
-     * Creates a NanoAmount from a given {@code raw} value.
+     * Creates a KakituAmount from a given {@code raw} value.
      *
      * @param rawValue the raw value
      */
-    public NanoAmount(BigInteger rawValue)
+    public KakituAmount(BigInteger rawValue)
     {
       if (rawValue == null)
         throw new ArgumentException("Raw value cannot be null.");
@@ -72,9 +72,9 @@ namespace NanoPlugin
      *
      * @return the value, in the base unit
      */
-    public string getAsNano()
+    public string getAsKshs()
     {
-      return NanoUtils.RawToNano(ToString());
+      return KakituUtils.RawToKshs(ToString());
     }
 
     public override int GetHashCode()
@@ -82,12 +82,12 @@ namespace NanoPlugin
       return rawValue.GetHashCode();
     }
 
-    public static NanoAmount operator +(NanoAmount a, NanoAmount b) => new NanoAmount(a.rawValue + b.rawValue);
-    public static NanoAmount operator -(NanoAmount a, NanoAmount b) => new NanoAmount(a.rawValue - b.rawValue);
-    public static bool operator <(NanoAmount a, NanoAmount b) => a.rawValue < b.rawValue;
-    public static bool operator >(NanoAmount a, NanoAmount b) => a.rawValue > b.rawValue;
-    public static bool operator <=(NanoAmount a, NanoAmount b) => a.rawValue <= b.rawValue;
-    public static bool operator >=(NanoAmount a, NanoAmount b) => a.rawValue >= b.rawValue;
+    public static KakituAmount operator +(KakituAmount a, KakituAmount b) => new KakituAmount(a.rawValue + b.rawValue);
+    public static KakituAmount operator -(KakituAmount a, KakituAmount b) => new KakituAmount(a.rawValue - b.rawValue);
+    public static bool operator <(KakituAmount a, KakituAmount b) => a.rawValue < b.rawValue;
+    public static bool operator >(KakituAmount a, KakituAmount b) => a.rawValue > b.rawValue;
+    public static bool operator <=(KakituAmount a, KakituAmount b) => a.rawValue <= b.rawValue;
+    public static bool operator >=(KakituAmount a, KakituAmount b) => a.rawValue >= b.rawValue;
 
     public override bool Equals(Object obj)
     {
@@ -97,7 +97,7 @@ namespace NanoPlugin
       }
       else
       {
-        NanoAmount p = (NanoAmount)obj;
+        KakituAmount p = (KakituAmount)obj;
         return rawValue.Equals (p.rawValue);
       }
     }

@@ -5,7 +5,7 @@ using System.Text;
 using UnityEngine;
 using UnityEngine.Networking;
 
-namespace NanoPlugin
+namespace KakituPlugin
 {
   public class RPC
   {

@@ -63,8 +63,8 @@
     <Compile Include="Assets\Nano\Plugins\Chaos.NaCl.Blake2B.Core\Internal\Array8.cs" />
     <Compile Include="Assets\Nano\Plugins\Chaos.NaCl.Blake2B.Core\XSalsa20Poly1305.cs" />
     <Compile Include="Assets\Nano\Plugins\Chaos.NaCl.Blake2B.Core\Internal\Ed25519Ref10\sc_reduce.cs" />
-    <Compile Include="Assets\Nano\Plugins\Nano\NanoUtils.cs" />
-    <Compile Include="Assets\Nano\Plugins\Nano\NanoAmount.cs" />
+    <Compile Include="Assets\Kakitu\Plugins\Kakitu\KakituUtils.cs" />
+    <Compile Include="Assets\Kakitu\Plugins\Kakitu\KakituAmount.cs" />
     <Compile Include="Assets\Nano\Plugins\Chaos.NaCl.Blake2B.Core\Internal\Ed25519Ref10\fe_isnegative.cs" />
     <Compile Include="Assets\Nano\Plugins\Chaos.NaCl.Blake2B.Core\Internal\Ed25519Ref10\sqrtm1.cs" />
     <Compile Include="Assets\Nano\Plugins\Chaos.NaCl.Blake2B.Core\Internal\Ed25519Ref10\GroupElement.cs" />

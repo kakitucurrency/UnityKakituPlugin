@@ -1,4 +1,4 @@
-﻿using NanoPlugin;
+﻿using KakituPlugin;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -6,7 +6,7 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class NanoDemo : MonoBehaviour
+public class KakituDemo : MonoBehaviour
 {
   // UI elements
   public Button CreatePrivateKeyUI;
@@ -47,33 +47,33 @@ public class NanoDemo : MonoBehaviour
   public string arcadePrivateKey;
   public string watcherPrivateKey;
 
-  public NanoAmount currentBalance = new NanoAmount(0);
+  public KakituAmount currentBalance = new KakituAmount(0);
 
-  private string password = "wezrule";
-  private string defaultRep = "nano_387tj8fjeo6r35ry5tjppympp8dct4d1ogpis7uaxsw8ywsrgp6shfge7two";
+  private string password = "kakitu";
+  private string defaultRep = "kshs_387tj8fjeo6r35ry5tjppympp8dct4d1ogpis7uaxsw8ywsrgp6shfge7two";
 
   void Start()
   {
     // Initialize RPC & Websocket
-    nanoManager = gameObject.AddComponent<NanoManager>();
+    nanoManager = gameObject.AddComponent<KakituManager>();
     nanoManager.rpcURL = "http://95.216.164.23:28103"; // Update this url to point to your JSON-RPC server
     nanoManager.defaultRep = defaultRep;
 
-    nanoWebsocket = gameObject.AddComponent<NanoWebSocket>();
+    nanoWebsocket = gameObject.AddComponent<KakituWebSocket>();
     nanoWebsocket.url = "ws://95.216.164.23:28104"; // Update this url to point to your websocket server
     nanoManager.Websocket = nanoWebsocket;
 
-    Debug.Log("Private key files located at: " + Path.Combine(Application.persistentDataPath, "Nano"));
+    Debug.Log("Private key files located at: " + Path.Combine(Application.persistentDataPath, "Kakitu"));
 
     // Update QR codes for arcade
-    arcadePrivateKey = NanoUtils.ByteArrayToHexString(NanoUtils.GeneratePrivateKey());
+    arcadePrivateKey = KakituUtils.ByteArrayToHexString(KakituUtils.GeneratePrivateKey());
 
     nanoManager.AddOnWebsocketConnectListener((bool isError, bool isReconnect) =>
    {
      // Called when the connection is successfully opened (or failed), it will automatically keep trying to connect if there is a failure
      if (!isError)
      {
-       nanoManager.ListenForPaymentWaitConfirmation(NanoUtils.PrivateKeyToAddress(arcadePrivateKey), new NanoAmount("1000000000000000000000000"), true, (error) =>
+       nanoManager.ListenForPaymentWaitConfirmation(KakituUtils.PrivateKeyToAddress(arcadePrivateKey), new KakituAmount("1000000000000000000000000"), true, (error) =>
        {
          if (!error)
          {
@@ -136,10 +136,10 @@ public class NanoDemo : MonoBehaviour
     UnwatchUI.onClick.AddListener(OnClickUnwatch);
 
     var numRawPayToPlay = "1000000000000000000000000";
-    var qrCodePayAsTexture2D = NanoUtils.GenerateQRCodeTextureWithAmount(10, NanoUtils.PrivateKeyToAddress(arcadePrivateKey), numRawPayToPlay, 10);
+    var qrCodePayAsTexture2D = KakituUtils.GenerateQRCodeTextureWithAmount(10, KakituUtils.PrivateKeyToAddress(arcadePrivateKey), numRawPayToPlay, 10);
     QRCodePayArcadeUI.sprite = Sprite.Create(qrCodePayAsTexture2D, new Rect(0.0f, 0.0f, qrCodePayAsTexture2D.width, qrCodePayAsTexture2D.height), new Vector2(0.5f, 0.5f));
 
-    watcherPrivateKey = NanoUtils.ByteArrayToHexString(NanoUtils.GeneratePrivateKey());
+    watcherPrivateKey = KakituUtils.ByteArrayToHexString(KakituUtils.GeneratePrivateKey());
 
     OnClickNextPrivateKey();
   }
@@ -149,7 +149,7 @@ public class NanoDemo : MonoBehaviour
     // Recieve this block
 
     List<PendingBlock> pendingBlocks = null;
-    var arcadeAddress = NanoUtils.PrivateKeyToAddress(arcadePrivateKey);
+    var arcadeAddress = KakituUtils.PrivateKeyToAddress(arcadePrivateKey);
     yield return nanoManager.PendingBlocks(arcadeAddress, (responsePendingBlocks) =>
     {
       pendingBlocks = responsePendingBlocks;
@@ -164,7 +164,7 @@ public class NanoDemo : MonoBehaviour
       {
         if (!error)
         {
-          var qrCodePayoutAsTexture2D = NanoUtils.GenerateQRCodeTextureWithPrivateKey(10, arcadePrivateKey, 10);
+          var qrCodePayoutAsTexture2D = KakituUtils.GenerateQRCodeTextureWithPrivateKey(10, arcadePrivateKey, 10);
           QRCodePayoutArcadeUI.sprite = Sprite.Create(qrCodePayoutAsTexture2D, new Rect(0.0f, 0.0f, qrCodePayoutAsTexture2D.width, qrCodePayoutAsTexture2D.height), new Vector2(0.5f, 0.5f));
           QRCodePayArcadeUI.sprite = null;
 
@@ -195,22 +195,22 @@ public class NanoDemo : MonoBehaviour
   void PrivateKeyChanged()
   {
     // Update the public key text element
-    address = NanoUtils.PrivateKeyToAddress(privateKey);
+    address = KakituUtils.PrivateKeyToAddress(privateKey);
     PublicKeyUI.text = address;
 
     // Update QRcode for topping up funds
-    var qrCodeAsTexture2D = NanoUtils.GenerateQRCodeTextureOnlyAccount(10, address, 10);
+    var qrCodeAsTexture2D = KakituUtils.GenerateQRCodeTextureOnlyAccount(10, address, 10);
     QRCodeTopUpUI.sprite = Sprite.Create(qrCodeAsTexture2D, new Rect(0.0f, 0.0f, qrCodeAsTexture2D.width, qrCodeAsTexture2D.height), new Vector2(0.5f, 0.5f));
   }
 
   void OnClickCreatePrivateKey()
   {
-    privateKey = NanoUtils.ByteArrayToHexString(NanoUtils.GeneratePrivateKey());
+    privateKey = KakituUtils.ByteArrayToHexString(KakituUtils.GeneratePrivateKey());
     TimeSpan t = DateTime.UtcNow - new DateTime(1970, 1, 1);
-    var filename = "encrypted_privateKey_" + (int)t.TotalSeconds + ".nano";
+    var filename = "encrypted_privateKey_" + (int)t.TotalSeconds + ".kshs";
 
     // Save the private key to disk
-    NanoUtils.SavePrivateKey(privateKey, filename, password);
+    KakituUtils.SavePrivateKey(privateKey, filename, password);
     PrivateKeyChanged();
     LastWorkUI.text = ""; // Clear last work
   }
@@ -219,11 +219,11 @@ public class NanoDemo : MonoBehaviour
   private int privateKeyIndex = 0;
   void OnClickNextPrivateKey()
   {
-    var privateKeyFiles = NanoUtils.GetPrivateKeyFiles();
+    var privateKeyFiles = KakituUtils.GetPrivateKeyFiles();
     if (privateKeyFiles.Length > 0)
     {
       var privateKeyFile = privateKeyFiles[privateKeyIndex];
-      privateKey = NanoUtils.LoadPrivateKey(privateKeyFile, password);
+      privateKey = KakituUtils.LoadPrivateKey(privateKeyFile, password);
       if (!String.IsNullOrEmpty(privateKey))
       {
         PrivateKeyChanged();
@@ -289,8 +289,8 @@ public class NanoDemo : MonoBehaviour
     if (previous != null)
     {
       // Create the block to send
-      var newBalance = currentBalance - new NanoAmount(System.Numerics.BigInteger.Parse("1000000000000000000000000"));
-      var block = nanoManager.CreateBlock(address, NanoUtils.HexStringToByteArray(privateKey), newBalance, NanoUtils.PrivateKeyToPublicKeyHexString(watcherPrivateKey), previous, rep, LastWorkUI.text);
+      var newBalance = currentBalance - new KakituAmount(System.Numerics.BigInteger.Parse("1000000000000000000000000"));
+      var block = nanoManager.CreateBlock(address, KakituUtils.HexStringToByteArray(privateKey), newBalance, KakituUtils.PrivateKeyToPublicKeyHexString(watcherPrivateKey), previous, rep, LastWorkUI.text);
       yield return nanoManager.Process(block, BlockType.send, (hash) =>
      {
        if (hash != null)
@@ -341,7 +341,7 @@ public class NanoDemo : MonoBehaviour
 
       // Create the block to receive
       var newBalance = currentBalance + pendingBlock.amount;
-      var block = nanoManager.CreateBlock(address, NanoUtils.HexStringToByteArray(privateKey), newBalance, pendingBlock.source, previous, rep != null ? rep : defaultRep, LastWorkUI.text);
+      var block = nanoManager.CreateBlock(address, KakituUtils.HexStringToByteArray(privateKey), newBalance, pendingBlock.source, previous, rep != null ? rep : defaultRep, LastWorkUI.text);
       yield return nanoManager.Process(block, previous == null ? BlockType.open : BlockType.receive, (hash) =>
       {
         if (hash != null)
@@ -365,7 +365,7 @@ public class NanoDemo : MonoBehaviour
 
   private IEnumerator SendHandler()
   {
-    yield return nanoManager.Send(NanoUtils.PrivateKeyToAddress(watcherPrivateKey), new NanoAmount("1000000000000000000000000"), privateKey, (error, hash) =>
+    yield return nanoManager.Send(KakituUtils.PrivateKeyToAddress(watcherPrivateKey), new KakituAmount("1000000000000000000000000"), privateKey, (error, hash) =>
     {
       if (!error)
       {
@@ -412,8 +412,8 @@ public class NanoDemo : MonoBehaviour
 
   IEnumerator SendWaitConfHandler()
   {
-    var amount = new NanoAmount(NanoUtils.NanoToRaw("0.000001"));
-    yield return nanoManager.SendWaitConf(NanoUtils.PrivateKeyToAddress(watcherPrivateKey), amount, privateKey, (error, hash) =>
+    var amount = new KakituAmount(KakituUtils.NanoToRaw("0.000001"));
+    yield return nanoManager.SendWaitConf(KakituUtils.PrivateKeyToAddress(watcherPrivateKey), amount, privateKey, (error, hash) =>
     {
       if (!error)
       {
@@ -487,7 +487,7 @@ public class NanoDemo : MonoBehaviour
   private int lastWatcherId = 0;
   void OnClickWatch()
   {
-    lastWatcherId = nanoManager.Watch(NanoUtils.PrivateKeyToAddress(watcherPrivateKey), (watcherInfo) =>
+    lastWatcherId = nanoManager.Watch(KakituUtils.PrivateKeyToAddress(watcherPrivateKey), (watcherInfo) =>
     {
       WatchedUI.text = watcherInfo.hash;
     });
@@ -495,7 +495,7 @@ public class NanoDemo : MonoBehaviour
 
   void OnClickUnwatch()
   {
-    nanoManager.Unwatch(NanoUtils.PrivateKeyToAddress(watcherPrivateKey), lastWatcherId);
+    nanoManager.Unwatch(KakituUtils.PrivateKeyToAddress(watcherPrivateKey), lastWatcherId);
   }
 
   // Update is called once per frame
@@ -526,6 +526,6 @@ public class NanoDemo : MonoBehaviour
     }
   }
 
-  private NanoWebSocket nanoWebsocket;
-  private NanoManager nanoManager;
+  private KakituWebSocket kakituWebsocket;
+  private KakituManager nanoManager;
 }

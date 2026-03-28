@@ -1,6 +1,6 @@
 Chaos.NaCl.Blake2B.Core - https://github.com/feedthedogs/Chaos.NaCl.Blake2B.Core
 SimpleJSON - https://github.com/simplejson/simplejson
-NanoDotNet - https://github.com/Flufd/NanoDotNet
+KakituDotNet - https://github.com/Flufd/KakituDotNet
 
 Blake2Core - https://www.nuget.org/packages/Blake2Core/
 QRCoder.dll - https://www.nuget.org/packages/QRCoder/

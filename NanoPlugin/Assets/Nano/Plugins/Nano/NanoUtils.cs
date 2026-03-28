@@ -11,12 +11,12 @@ using UnityEngine;
 using QRCoder;
 using QRCoder.Unity;
 
-namespace NanoPlugin
+namespace KakituPlugin
 {
-  public static class NanoUtils
+  public static class KakituUtils
   {
-    private static Dictionary<char, string> nano_addressEncoding;
-    private static Dictionary<string, char> nano_addressDecoding;
+    private static Dictionary<char, string> kshs_addressEncoding;
+    private static Dictionary<string, char> kshs_addressDecoding;
 
     public static byte[] GeneratePrivateKey()
     {
@@ -36,18 +36,18 @@ namespace NanoPlugin
       BigInteger raw;
       if (BigInteger.TryParse(rawStr, out raw))
       {
-        return raw <= NanoAmount.MAX_VALUE.getAsRaw() && raw >= 0;
+        return raw <= KakituAmount.MAX_VALUE.getAsRaw() && raw >= 0;
       }
 
       return false;
     }
 
     /**
-     * Checks if the nano string is valid.
+     * Checks if the kshs string is valid.
      *
      * @param nanoStr the raw value
      */
-    public static bool ValidateNano(string nano)
+    public static bool ValidateKshs(string nano)
     {
       if (nano.Length > 40 || nano.Length == 0)
       {
@@ -85,7 +85,7 @@ namespace NanoPlugin
       {
         // There is no decimal and it contains only digits
         var as_int = Int32.Parse(nano);
-        return as_int <= 340282366;  // This is the maximum amount of Nano there is
+        return as_int <= 340282366;  // This is the maximum amount of Kakitu there is
       }
       else
       {
@@ -107,7 +107,7 @@ namespace NanoPlugin
         if (!String.IsNullOrWhiteSpace(integer_part))
         {
           var as_int = Int32.Parse(integer_part);
-          error = as_int > 340282366;  // This is the maximum amount of Nano there is
+          error = as_int > 340282366;  // This is the maximum amount of Kakitu there is
         }
 
         if (!error)
@@ -123,7 +123,7 @@ namespace NanoPlugin
 
       return !error;
     }
-    public static string NanoToRaw(string str)
+    public static string KshsToRaw(string str)
     {
       // Remove decimal point (if exists) and add necessary trailing 0s to form exact raw number
       var decimalPoint = -1;
@@ -162,7 +162,7 @@ namespace NanoPlugin
       // Remove leading zeroes
       return raw.Substring(start_index);
     }
-    public static string RawToNano(string str)
+    public static string RawToKshs(string str)
     {
       // Insert a decimal 30 decimal places from the right
       if (str.Length <= 30)
@@ -335,7 +335,7 @@ namespace NanoPlugin
 
     public static Texture2D GenerateQRCodeTextureOnlyAccount(int pixelsPerModule, string account, int margin)
     {
-      string qrString = "nano:" + account;
+      string qrString = "kakitu:" + account;
       return GenerateQRCodeTexture(pixelsPerModule, qrString, margin);
     }
 
@@ -348,7 +348,7 @@ namespace NanoPlugin
     public static Texture2D GenerateQRCodeTextureWithAmount(
       int pixelsPerModule, string account, string amount, int margin)
     {
-      string qrString = "nano:" + account;
+      string qrString = "kakitu:" + account;
       if (amount != "")
       {
         qrString += "?amount=" + amount;
@@ -356,17 +356,17 @@ namespace NanoPlugin
       return GenerateQRCodeTexture(pixelsPerModule, qrString, margin);
     }
 
-    static NanoUtils()
+    static KakituUtils()
     {
-      nano_addressEncoding = new Dictionary<char, string>();
-      nano_addressDecoding = new Dictionary<string, char>();
+      kshs_addressEncoding = new Dictionary<char, string>();
+      kshs_addressDecoding = new Dictionary<string, char>();
 
 
       var i = 0;
       foreach (var validAddressChar in "13456789abcdefghijkmnopqrstuwxyz")
       {
-        nano_addressEncoding[validAddressChar] = Convert.ToString(i, 2).PadLeft(5, '0');
-        nano_addressDecoding[Convert.ToString(i, 2).PadLeft(5, '0')] = validAddressChar;
+        kshs_addressEncoding[validAddressChar] = Convert.ToString(i, 2).PadLeft(5, '0');
+        kshs_addressDecoding[Convert.ToString(i, 2).PadLeft(5, '0')] = validAddressChar;
         i++;
       }
     }
@@ -391,14 +391,14 @@ namespace NanoPlugin
 
     public static string PublicKeyToAddress(byte[] publicKey)
     {
-      var address = "nano_" + NanoEncode(publicKey);
+      var address = "kshs_" + KakituEncode(publicKey);
 
       var blake = Blake2B.Create(new Blake2BConfig() { OutputSizeInBytes = 5 });
       blake.Init();
       blake.Update(publicKey);
       var checksumBytes = blake.Finish();
 
-      address += NanoEncode(checksumBytes.Reverse().ToArray(), false);
+      address += KakituEncode(checksumBytes.Reverse().ToArray(), false);
 
       return address;
     }
@@ -408,7 +408,7 @@ namespace NanoPlugin
       return PublicKeyToAddress(HexStringToByteArray(publicKey));
     }
 
-    private static string NanoEncode(byte[] bytes, bool padZeros = true)
+    private static string KakituEncode(byte[] bytes, bool padZeros = true)
     {
       var binaryString = padZeros ? "0000" : "";
       for (int i = 0; i < bytes.Length; i++)
@@ -420,7 +420,7 @@ namespace NanoPlugin
 
       for (int i = 0; i < binaryString.Length; i += 5)
       {
-        result += nano_addressDecoding[binaryString.Substring(i, 5)];
+        result += kshs_addressDecoding[binaryString.Substring(i, 5)];
       }
 
       return result;
@@ -459,20 +459,20 @@ namespace NanoPlugin
         return null;
       }
 
-      // Address must begin with nano_
-      if (!address.Substring(0, 5).Equals("nano_"))
+      // Address must begin with kshs_
+      if (!address.Substring(0, 5).Equals("kshs_"))
       {
         return null;
       }
 
-      // Remove nano_
+      // Remove kshs_
       var publicKeyPart = address.Substring(5, address.Length - 8);
 
       var binaryString = "";
       for (int i = 0; i < publicKeyPart.Length; i++)
       {
         // Decode each character into string representation of it's binary parts
-        binaryString += nano_addressEncoding[publicKeyPart[i]];
+        binaryString += kshs_addressEncoding[publicKeyPart[i]];
       }
 
       // Remove leading 4 0s
@@ -530,7 +530,7 @@ namespace NanoPlugin
     {
       var cypherText = Encrypt(plainSeed, password);
 
-      string destination = Path.Combine(Application.persistentDataPath, "Nano", seedFilename);
+      string destination = Path.Combine(Application.persistentDataPath, "Kakitu", seedFilename);
       System.IO.FileInfo file = new System.IO.FileInfo(destination);
       file.Directory.Create(); // If the directory already exists, this method does nothing.
       File.WriteAllText(file.FullName, cypherText);
@@ -539,7 +539,7 @@ namespace NanoPlugin
     // Loads the file and decrypts the encrypted private key with the password
     public static string LoadPrivateKey(string seedFilename, string password)
     {
-      string file = Path.Combine(Application.persistentDataPath, "Nano", seedFilename);
+      string file = Path.Combine(Application.persistentDataPath, "Kakitu", seedFilename);
 
       if (File.Exists(file))
       {
@@ -556,7 +556,7 @@ namespace NanoPlugin
     public static string[] GetPrivateKeyFiles()
     {
       // Loop through all files in data path
-      string directory = Path.Combine(Application.persistentDataPath, "Nano");
+      string directory = Path.Combine(Application.persistentDataPath, "Kakitu");
       if (Directory.Exists(directory))
       {
         return Directory.EnumerateFiles(directory).Select(Path.GetFileName).ToArray();

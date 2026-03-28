@@ -4,12 +4,12 @@ using System.Collections.Generic;
 using NativeWebSocket;
 using UnityEngine;
 
-namespace NanoPlugin
+namespace KakituPlugin
 {
   public delegate void OnClose();
   public delegate void OnConfirmation(WebsocketConfirmationResponseData responseData);
   public delegate void OnOpen(bool isError, bool isReconnect);
-  public class NanoWebSocket : MonoBehaviour
+  public class KakituWebSocket : MonoBehaviour
   {
     WebSocket websocket;
 
@@ -42,7 +42,7 @@ namespace NanoPlugin
         {
           AccountRegisterRequest request = new AccountRegisterRequest
           {
-            account = NanoUtils.PublicKeyToAddress (registeredAccount.Key),
+            account = KakituUtils.PublicKeyToAddress (registeredAccount.Key),
             action = "register_account"
           };
           await websocket.SendText(JsonUtility.ToJson(request));
@@ -119,7 +119,7 @@ namespace NanoPlugin
     public async void RegisterAccount(String address)
     {
       int count;
-      var publicKey = NanoUtils.AddressToPublicKeyHexString(address);
+      var publicKey = KakituUtils.AddressToPublicKeyHexString(address);
       if (registeredAccounts.TryGetValue(publicKey, out count))
       {
         registeredAccounts[publicKey]++;
@@ -142,7 +142,7 @@ namespace NanoPlugin
     public async void UnregisterAccount(string address)
     {
       int count;
-      var publicKey = NanoUtils.AddressToPublicKeyHexString(address);
+      var publicKey = KakituUtils.AddressToPublicKeyHexString(address);
       if (registeredAccounts.TryGetValue(publicKey, out count))
       {
         registeredAccounts[publicKey]--;

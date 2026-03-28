@@ -1,4 +1,4 @@
-# NanoPlugin
+# KakituPlugin
 Plugin for integrating the Nano cryptocurrency into Unity.
 
 Tested on Windows/Linux/MacOS/Android/iOS/HTML with Unity 2020.3.2f1
@@ -11,68 +11,68 @@ The easiest way to get started is to open up the scene in Scenes/SampleScene.uni
 ![DemoLevelScreenshotFull](https://user-images.githubusercontent.com/650038/110212040-5e287700-7e91-11eb-8909-1e8fcd0ff611.PNG)
 
 #### A description of the various files
-`NanoUtils.cs` contains various generic functions such as creating seeds, encrypting/decrypting them using AES with a password, converting to accounts, converting between Raw and Nano and various other things.  
-`NanoWebsocket.cs` maintains the websocket connection to the proxies.  
-`NanoManager.cs` is where all other functionality is located  
-`NanoAmount.cs` is a helper class for storing and manipulating the raw units in Nano  
+`KakituUtils.cs` contains various generic functions such as creating seeds, encrypting/decrypting them using AES with a password, converting to accounts, converting between Raw and KSHS and various other things.  
+`KakituWebsocket.cs` maintains the websocket connection to the proxies.  
+`KakituManager.cs` is where all other functionality is located  
+`KakituAmount.cs` is a helper class for storing and manipulating the raw units in KSHS  
 `RPC.cs` connects to a server forward proxy for the nano node  
 
-`NanoDemo.cs` contains content for the sample scene which illustrates all the functionality available.  
+`KakituDemo.cs` contains content for the sample scene which illustrates all the functionality available.  
 `TestUtils.cs` contains test for various things.  
 
-To set up using the Nano plugin copy the Nano folder across to your project. The Scripts/Scenes folders are not required for deployment. A simple example of setting up the necessary functions with the public servers is:
+To set up using the Kakitu plugin copy the Kakitu folder across to your project. The Scripts/Scenes folders are not required for deployment. A simple example of setting up the necessary functions with the public servers is:
 
 ```
-using NanoPlugin;
+using KakituPlugin;
 
-public class NanoDemo : MonoBehaviour
+public class KakituDemo : MonoBehaviour
 {
   void Start()
   {
-    // Initialize the NanoManager & NanoWebsocket
-    nanoManager = gameObject.AddComponent<NanoManager>();
-    nanoManager.rpcURL = "http://95.216.164.23:28103"; // Modify url to RPC server host:port
-    nanoManager.defaultRep = "nano_387tj8fjeo6r35ry5tjppympp8dct4d1ogpis7uaxsw8ywsrgp6shfge7two";
+    // Initialize the KakituManager & KakituWebsocket
+    kakituManager = gameObject.AddComponent<KakituManager>();
+    kakituManager.rpcURL = "http://95.216.164.23:28103"; // Modify url to RPC server host:port
+    kakituManager.defaultRep = "kshs_387tj8fjeo6r35ry5tjppympp8dct4d1ogpis7uaxsw8ywsrgp6shfge7two";
 
-    nanoWebsocket = gameObject.AddComponent<NanoWebSocket>();
-    nanoWebsocket.url = "ws://95.216.164.23:28104"; // Modify url to websocket server host:port
-    nanoManager.Websocket = nanoWebsocket;
+    kakituWebsocket = gameObject.AddComponent<KakituWebSocket>();
+    kakituWebsocket.url = "ws://95.216.164.23:28104"; // Modify url to websocket server host:port
+    kakituManager.Websocket = kakituWebsocket;
   }
 
-  private NanoWebSocket websocket;
-  private NanoManager nanoManager;
+  private KakituWebSocket websocket;
+  private KakituManager kakituManager;
 };
 ```
 
 ## Various other functions available
 
 ### Generate a private key
-`byte[] privateKey = NanoUtils.GeneratePrivateKey();`
+`byte[] privateKey = KakituUtils.GeneratePrivateKey();`
 
 ### Convert a byte[] to hex string
-`string hexPrivateKey = NanoUtils.ByteArrayToHexString(privateKey);`
+`string hexPrivateKey = KakituUtils.ByteArrayToHexString(privateKey);`
 
 ### Convert a hex string to byte[]
-`byte[] privateKey = NanoUtils.HexStringToByteArray(hexPrivateKey);`
+`byte[] privateKey = KakituUtils.HexStringToByteArray(hexPrivateKey);`
 
 ### Get the nano_ address from the seed
-`string address = NanoUtils.PrivateKeyToAddress(privateKey);`
+`string address = KakituUtils.PrivateKeyToAddress(privateKey);`
 
 ### Get the public key hex string from the seed
-`string publicKey = NanoUtils.PrivateKeyToPublicKeyHexString(privateKey);`
+`string publicKey = KakituUtils.PrivateKeyToPublicKeyHexString(privateKey);`
 
 ### Convert a nano_ address and public key hex string
-`string publicKey = NanoUtils.AddressToPublicKeyHexString(address);`
+`string publicKey = KakituUtils.AddressToPublicKeyHexString(address);`
 
 ### Convert a public key hex string to nano_ address
-`string address = NanoUtils.PublicKeyToAddress(publicKey);`
+`string address = KakituUtils.PublicKeyToAddress(publicKey);`
 
 ## Individual node functions
 These are low level building block functions which are not always necessary, it is recommened to use the utility functions mentioned below which encapsulates most of this.
 ### Get account information
 ```
 // First we get the frontier
-yield return nanoManager.AccountInfo(address, (accountInfo) =>
+yield return kakituManager.AccountInfo(address, (accountInfo) =>
 {
   var previous = accountInfo.frontier;
   var rep = accountInfo.representative;
@@ -83,7 +83,7 @@ yield return nanoManager.AccountInfo(address, (accountInfo) =>
 ### Get pending blocks
 ```
 List<PendingBlock> pendingBlocks = null;
-yield return nanoManager.PendingBlocks(address, (responsePendingBlocks) =>
+yield return kakituManager.PendingBlocks(address, (responsePendingBlocks) =>
 {
   pendingBlocks = responsePendingBlocks;
 });
@@ -92,10 +92,10 @@ if (pendingBlocks != null && pendingBlocks.Count > 0)
 ```
 
 ### Create & sign a block
-`var block = nanoManager.CreateBlock(address, NanoUtils.HexStringToByteArray(privateKey), newBalance, link, previous, rep, work);`
+`var block = kakituManager.CreateBlock(address, KakituUtils.HexStringToByteArray(privateKey), newBalance, link, previous, rep, work);`
 ### Process a block to the network
 ```
-nanoManager.Process(block, BlockType.send, (hash) =>
+kakituManager.Process(block, BlockType.send, (hash) =>
 {
   if (hash != null)
     // Block is processed
@@ -103,7 +103,7 @@ nanoManager.Process(block, BlockType.send, (hash) =>
 ```
 ### Create QR Code
 ```
-var texture2D = NanoUtils.GenerateQRCodeTextureWithAmount(250, address, numRawPayToPlay, 50);
+var texture2D = KakituUtils.GenerateQRCodeTextureWithAmount(250, address, numRawPayToPlay, 50);
 var sprite = Sprite.Create(texture2D, new Rect(0.0f, 0.0f, texture2D.width, texture2D.height), new Vector2(0.5f, 0.5f), 100.0f);
 ```
 ## Utility node functions
@@ -111,7 +111,7 @@ var sprite = Sprite.Create(texture2D, new Rect(0.0f, 0.0f, texture2D.width, text
 ```
 IEnumerator SendWaitConfHandler()
 {
-  yield return nanoManager.SendWaitConf(toAddress, amount, privateKey, (error, hash) =>
+  yield return kakituManager.SendWaitConf(toAddress, amount, privateKey, (error, hash) =>
   {
     if (!error)
     {
@@ -128,7 +128,7 @@ IEnumerator SendWaitConfHandler()
 ```
 private IEnumerator SendHandler()
 {
-  yield return nanoManager.Send(toAddress, amount, privateKey, (error, hash) =>
+  yield return kakituManager.Send(toAddress, amount, privateKey, (error, hash) =>
   {
     if (!error)
     {
@@ -142,14 +142,14 @@ private IEnumerator SendHandler()
 }
 ```
 ### Receive nano, waiting for confirmation from the network
-`yield return nanoManager.ReceiveWaitConf(address, pendingBlock, privateKey, (error, hash) => { }`
+`yield return kakituManager.ReceiveWaitConf(address, pendingBlock, privateKey, (error, hash) => { }`
 
 ### Receive nano, without waiting for confirmation from the network
-`yield return nanoManager.Receive(address, pendingBlock, privateKey, (error, hash) => { }`
+`yield return kakituManager.Receive(address, pendingBlock, privateKey, (error, hash) => { }`
 
 ### Automatically pocket nano
 ```
-nanoManager.AutomatePocketing(address, privateKey, (block) =>
+kakituManager.AutomatePocketing(address, privateKey, (block) =>
   {
     // block is the block received for the 
   });
@@ -157,14 +157,14 @@ nanoManager.AutomatePocketing(address, privateKey, (block) =>
 ### Listen to all confirmations (useful for visualisers)
 ```
 // Register a confirmation listener, can have multiple of these
-nanoManager.AddConfirmationListener((websocketConfirmationResponse) =>
+kakituManager.AddConfirmationListener((websocketConfirmationResponse) =>
 {
   var block = websocketConfirmationResponse.message.block;
   // Do something, show a ball etc
 });
 
 // Set up the pipelining for the above confirmation listener
-nanoManager.ListenAllConfirmations();
+kakituManager.ListenAllConfirmations();
 ```
 Note: Make sure that `config.js` on the server has `listen_all = true`
 

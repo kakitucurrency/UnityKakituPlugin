@@ -3,11 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace NanoPlugin
+namespace KakituPlugin
 {
   public class PendingBlock
   {
-    public NanoAmount amount;
+    public KakituAmount amount;
     public string source;
   };
 
@@ -21,7 +21,7 @@ namespace NanoPlugin
   public class ListeningPayment
   {
     public string address;
-    public NanoAmount amount;
+    public KakituAmount amount;
     public int watcherId;
     public bool exactAmount;
     public Action<bool> callback;
@@ -38,19 +38,19 @@ namespace NanoPlugin
 
   public class WatcherInfo
   {
-    public WatcherInfo(NanoAmount amount, ConfType confType, string hash)
+    public WatcherInfo(KakituAmount amount, ConfType confType, string hash)
     {
       this.amount = amount;
       this.confType = confType;
       this.hash = hash;
     }
 
-    public NanoAmount amount;
+    public KakituAmount amount;
     public ConfType confType;
     public string hash;
   };
 
-  public class NanoManager : MonoBehaviour
+  public class KakituManager : MonoBehaviour
   {
     private float timeUpdate = 0.0f;
     private int watcherId = 0;
@@ -85,7 +85,7 @@ namespace NanoPlugin
       websocket.UnlistenAll();
     }
 
-    public void ListenForPaymentWaitConfirmation(string address, NanoAmount amount, bool exactAmount, Action<bool> callback)
+    public void ListenForPaymentWaitConfirmation(string address, KakituAmount amount, bool exactAmount, Action<bool> callback)
     {
       if (listeningPayment.callback != null)
       {
@@ -180,7 +180,7 @@ namespace NanoPlugin
 
           // We could be monitoring multiple accounts which may be interacting with each other so need to check all
 
-          if (websocketConfirmationResponseData.message.block.subtype.Equals(NanoUtils.GetBlockTypeStr(BlockType.send)))
+          if (websocketConfirmationResponseData.message.block.subtype.Equals(KakituUtils.GetBlockTypeStr(BlockType.send)))
           {
             var linkAsAccount = websocketConfirmationResponseData.message.block.link_as_account;
             if (watchers.ContainsKey(linkAsAccount))
@@ -188,7 +188,7 @@ namespace NanoPlugin
               // Invoke callbacks
               foreach (var val in watchers[linkAsAccount])
               {
-                val.Value(new WatcherInfo(new NanoAmount(websocketConfirmationResponseData.message.amount), ConfType.SendTo, websocketConfirmationResponseData.message.hash));
+                val.Value(new WatcherInfo(new KakituAmount(websocketConfirmationResponseData.message.amount), ConfType.SendTo, websocketConfirmationResponseData.message.hash));
               }
             }
 
@@ -198,14 +198,14 @@ namespace NanoPlugin
               // Invoke callbacks
               foreach (var val in watchers[address])
               {
-                val.Value(new WatcherInfo(new NanoAmount(websocketConfirmationResponseData.message.amount), ConfType.SendFrom, websocketConfirmationResponseData.message.hash));
+                val.Value(new WatcherInfo(new KakituAmount(websocketConfirmationResponseData.message.amount), ConfType.SendFrom, websocketConfirmationResponseData.message.hash));
               }
             }
 
             // Check for payment
             if (listeningPayment.callback != null)
             {
-              if (listeningPayment.address.Equals(linkAsAccount) && listeningPayment.amount.Equals(new NanoAmount(websocketConfirmationResponseData.message.amount)) || (!listeningPayment.exactAmount && listeningPayment.amount > new NanoAmount(websocketConfirmationResponseData.message.amount)))
+              if (listeningPayment.address.Equals(linkAsAccount) && listeningPayment.amount.Equals(new KakituAmount(websocketConfirmationResponseData.message.amount)) || (!listeningPayment.exactAmount && listeningPayment.amount > new KakituAmount(websocketConfirmationResponseData.message.amount)))
               {
                 Unwatch(listeningPayment.address, listeningPayment.watcherId);
                 listeningPayment.callback(false);
@@ -224,7 +224,7 @@ namespace NanoPlugin
               }
             }
           }
-          else if ((websocketConfirmationResponseData.message.block.subtype.Equals(NanoUtils.GetBlockTypeStr(BlockType.receive))) || (websocketConfirmationResponseData.message.block.subtype.Equals(NanoUtils.GetBlockTypeStr(BlockType.open))))
+          else if ((websocketConfirmationResponseData.message.block.subtype.Equals(KakituUtils.GetBlockTypeStr(BlockType.receive))) || (websocketConfirmationResponseData.message.block.subtype.Equals(KakituUtils.GetBlockTypeStr(BlockType.open))))
           {
             var account = websocketConfirmationResponseData.message.account;
             if (watchers.ContainsKey(account))
@@ -232,7 +232,7 @@ namespace NanoPlugin
               // Invoke callbacks
               foreach (var val in watchers[account])
               {
-                val.Value(new WatcherInfo(new NanoAmount(websocketConfirmationResponseData.message.amount), ConfType.Receive, websocketConfirmationResponseData.message.hash));
+                val.Value(new WatcherInfo(new KakituAmount(websocketConfirmationResponseData.message.amount), ConfType.Receive, websocketConfirmationResponseData.message.hash));
               }
             }
           }
@@ -268,7 +268,7 @@ namespace NanoPlugin
 
     public IEnumerator WorkGenerate(string address, string previous, Action<string> callback)
     {
-      var hashForWork = previous == null ? NanoUtils.AddressToPublicKeyHexString(address) : previous;
+      var hashForWork = previous == null ? KakituUtils.AddressToPublicKeyHexString(address) : previous;
       yield return rpc.WorkGenerate(hashForWork, (response) =>
       {
         callback(JsonUtility.FromJson<WorkGenerateResponse>(response).work);
@@ -283,14 +283,14 @@ namespace NanoPlugin
       });
     }
 
-    public IEnumerator Balance(string address, Action<NanoAmount, NanoAmount> callback)
+    public IEnumerator Balance(string address, Action<KakituAmount, KakituAmount> callback)
     {
       yield return rpc.AccountBalance(address, (response) =>
       {
         var accountBalanceResponse = JsonUtility.FromJson<AccountBalanceResponse>(response);
         if (accountBalanceResponse != null && accountBalanceResponse.balance != null)
         {
-          callback(new NanoAmount(System.Numerics.BigInteger.Parse(accountBalanceResponse.balance)), new NanoAmount(System.Numerics.BigInteger.Parse(accountBalanceResponse.pending)));
+          callback(new KakituAmount(System.Numerics.BigInteger.Parse(accountBalanceResponse.balance)), new KakituAmount(System.Numerics.BigInteger.Parse(accountBalanceResponse.pending)));
         }
         else
         {
@@ -319,7 +319,7 @@ namespace NanoPlugin
           {
             PendingBlock pendingBlock = new PendingBlock();
             pendingBlock.source = kvp.Key;
-            pendingBlock.amount = new NanoAmount((string)kvp.Value);
+            pendingBlock.amount = new KakituAmount((string)kvp.Value);
             pendingBlocks.Add(pendingBlock);
           }
         }
@@ -328,7 +328,7 @@ namespace NanoPlugin
       callback(pendingBlocks);
     }
 
-    public Block CreateBlock(string address, byte[] privateKey, NanoAmount balance, string link, string previous, string rep, string work)
+    public Block CreateBlock(string address, byte[] privateKey, KakituAmount balance, string link, string previous, string rep, string work)
     {
       Block block = new Block();
       block.account = address;
@@ -337,8 +337,8 @@ namespace NanoPlugin
       block.previous = previous == null ? "0000000000000000000000000000000000000000000000000000000000000000" : previous;
       block.representative = rep;
       // Sign the block
-      var hash = NanoUtils.HashStateBlock(address, block.previous, balance.ToString(), rep, link);
-      var signature = NanoUtils.SignHash(hash, privateKey);
+      var hash = KakituUtils.HashStateBlock(address, block.previous, balance.ToString(), rep, link);
+      var signature = KakituUtils.SignHash(hash, privateKey);
       block.signature = signature;
       block.work = work;
       return block;
@@ -346,22 +346,22 @@ namespace NanoPlugin
 
     public IEnumerator Process(Block block, BlockType blockType, Action<string> callback)
     {
-      yield return rpc.Process(block, NanoUtils.GetBlockTypeStr(blockType), (response) =>
+      yield return rpc.Process(block, KakituUtils.GetBlockTypeStr(blockType), (response) =>
       {
         callback(JsonUtility.FromJson<ProcessResponse>(response).hash);
       });
     }
 
-    public IEnumerator Send(string toAddress, NanoAmount amount, string privateKey, string work, Action<bool, string> callback)
+    public IEnumerator Send(string toAddress, KakituAmount amount, string privateKey, string work, Action<bool, string> callback)
     {
       // First we get the frontier
-      NanoAmount currentBalance = null;
+      KakituAmount currentBalance = null;
       string previous = null;
       string rep = defaultRep;
-      string fromAddress = NanoUtils.PrivateKeyToAddress(privateKey);
+      string fromAddress = KakituUtils.PrivateKeyToAddress(privateKey);
       yield return AccountInfo(fromAddress, (accountInfo) =>
       {
-        currentBalance = new NanoAmount(accountInfo.balance);
+        currentBalance = new KakituAmount(accountInfo.balance);
         previous = accountInfo.frontier;
         rep = accountInfo.representative;
       });
@@ -381,7 +381,7 @@ namespace NanoPlugin
         {
           // Create the block to send
           var newBalance = currentBalance - amount;
-          var block = CreateBlock(fromAddress, NanoUtils.HexStringToByteArray(privateKey), newBalance, NanoUtils.AddressToPublicKeyHexString(toAddress), previous, rep, work);
+          var block = CreateBlock(fromAddress, KakituUtils.HexStringToByteArray(privateKey), newBalance, KakituUtils.AddressToPublicKeyHexString(toAddress), previous, rep, work);
           yield return Process(block, BlockType.send, (hash) =>
           {
             if (hash != null)
@@ -408,7 +408,7 @@ namespace NanoPlugin
       }
     }
 
-    public IEnumerator Send(string toAddress, NanoAmount amount, string privateKey, Action<bool, string> callback)
+    public IEnumerator Send(string toAddress, KakituAmount amount, string privateKey, Action<bool, string> callback)
     {
       yield return Send(toAddress, amount, privateKey, null, callback);
     }
@@ -416,13 +416,13 @@ namespace NanoPlugin
     public IEnumerator Receive(string address, PendingBlock pendingBlock, string privateKey, string work, Action<bool, string> callback)
     {
       // First we get the frontier
-      NanoAmount currentBalance = null;
+      KakituAmount currentBalance = null;
       string previous = null;
       var rep = defaultRep;
 
       yield return AccountInfo(address, (accountInfo) =>
       {
-        currentBalance = new NanoAmount(accountInfo.balance);
+        currentBalance = new KakituAmount(accountInfo.balance);
         previous = accountInfo.frontier;
         if (previous != null)
         {
@@ -443,7 +443,7 @@ namespace NanoPlugin
       {
         // Create the block to receive
         var newBalance = currentBalance + pendingBlock.amount;
-        var block = CreateBlock(address, NanoUtils.HexStringToByteArray(privateKey), newBalance, pendingBlock.source, previous, rep, work);
+        var block = CreateBlock(address, KakituUtils.HexStringToByteArray(privateKey), newBalance, pendingBlock.source, previous, rep, work);
         yield return Process(block, previous == null ? BlockType.open : BlockType.receive, (hash) =>
         {
           if (hash != null)
@@ -483,7 +483,7 @@ namespace NanoPlugin
     private Dictionary<string, Action<bool, string>> blockListener = new Dictionary<string, Action<bool, string>>();
     private Dictionary<string, KeyCallback> keyListeners = new Dictionary<string, KeyCallback>(); // For automatic pocketing
 
-    public IEnumerator SendWaitConf(string toAddress, NanoAmount amount, string privateKey, Action<bool, string> callback)
+    public IEnumerator SendWaitConf(string toAddress, KakituAmount amount, string privateKey, Action<bool, string> callback)
     {
       yield return Send(toAddress, amount, privateKey, (error, hash) =>
       {
@@ -527,7 +527,7 @@ namespace NanoPlugin
 
     void Start()
     {
-      rpc = new NanoPlugin.RPC(rpcURL);
+      rpc = new KakituPlugin.RPC(rpcURL);
     }
 
     void Update()
@@ -640,7 +640,7 @@ namespace NanoPlugin
         {
           yield return Balance(listeningPayout.address, (balance, pending) =>
           {
-            if (balance != null && balance.Equals(new NanoAmount("0")))
+            if (balance != null && balance.Equals(new KakituAmount("0")))
             {
               Unwatch(listeningPayout.address, listeningPayout.watcherId);
               listeningPayout.callback(false);
@@ -651,9 +651,9 @@ namespace NanoPlugin
       }
     }
 
-    private NanoPlugin.RPC rpc;
-    private NanoWebSocket websocket;
-    public NanoWebSocket Websocket
+    private KakituPlugin.RPC rpc;
+    private KakituWebSocket websocket;
+    public KakituWebSocket Websocket
     {
       private get { return websocket; }
       set
@@ -664,6 +664,6 @@ namespace NanoPlugin
     }
     public string rpcURL;
 
-    public string defaultRep = "nano_387tj8fjeo6r35ry5tjppympp8dct4d1ogpis7uaxsw8ywsrgp6shfge7two";
+    public string defaultRep = "kshs_387tj8fjeo6r35ry5tjppympp8dct4d1ogpis7uaxsw8ywsrgp6shfge7two";
   }
 }
