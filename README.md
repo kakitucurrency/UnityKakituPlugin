@@ -10,7 +10,9 @@ Features include: functions for processing blocks, creating seeds + reading/savi
 ### Quickly testing
 The easiest way to get started is to open up the scene in Scenes/SampleScene.unity. This provides a demo level to explore all the available functionality and connects to a publically available nodejs server.
 
-![DemoLevelScreenshotFull](https://user-images.githubusercontent.com/650038/110212040-5e287700-7e91-11eb-8909-1e8fcd0ff611.PNG)
+## Screenshots
+
+_Screenshots coming soon._
 
 #### A description of the various files
 `KakituUtils.cs` contains various generic functions such as creating seeds, encrypting/decrypting them using AES with a password, converting to accounts, converting between Raw and KSHS and various other things.  
@@ -199,4 +201,3 @@ Limitations
 - The test servers should not be used in production due to lack of security/ddos protection. Likely canditates for a future version are the KakituRPCProxy.
 
 Any donation contributions are welcome to the Kakitu Team: kshs_15qry5fsh4mjbsgsqj148o8378cx5ext4dpnh5ex99gfck686nxkiuk9uouy
-![download](https://user-images.githubusercontent.com/650038/97703969-70d90c80-1aa9-11eb-80b6-30bfad6dce31.png)
