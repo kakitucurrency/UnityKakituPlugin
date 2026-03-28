@@ -1,5 +1,5 @@
 # KakituPlugin
-Plugin for integrating the Nano cryptocurrency into Unity.
+Plugin for integrating the Kakitu cryptocurrency into Unity.
 
 Tested on Windows/Linux/MacOS/Android/iOS/HTML with Unity 2020.3.2f1
 
@@ -15,7 +15,7 @@ The easiest way to get started is to open up the scene in Scenes/SampleScene.uni
 `KakituWebsocket.cs` maintains the websocket connection to the proxies.  
 `KakituManager.cs` is where all other functionality is located  
 `KakituAmount.cs` is a helper class for storing and manipulating the raw units in KSHS  
-`RPC.cs` connects to a server forward proxy for the nano node  
+`RPC.cs` connects to a server forward proxy for the Kakitu node  
 
 `KakituDemo.cs` contains content for the sample scene which illustrates all the functionality available.  
 `TestUtils.cs` contains test for various things.  
@@ -55,16 +55,16 @@ public class KakituDemo : MonoBehaviour
 ### Convert a hex string to byte[]
 `byte[] privateKey = KakituUtils.HexStringToByteArray(hexPrivateKey);`
 
-### Get the nano_ address from the seed
+### Get the kshs_ address from the seed
 `string address = KakituUtils.PrivateKeyToAddress(privateKey);`
 
 ### Get the public key hex string from the seed
 `string publicKey = KakituUtils.PrivateKeyToPublicKeyHexString(privateKey);`
 
-### Convert a nano_ address and public key hex string
+### Convert a kshs_ address and public key hex string
 `string publicKey = KakituUtils.AddressToPublicKeyHexString(address);`
 
-### Convert a public key hex string to nano_ address
+### Convert a public key hex string to kshs_ address
 `string address = KakituUtils.PublicKeyToAddress(publicKey);`
 
 ## Individual node functions
@@ -107,7 +107,7 @@ var texture2D = KakituUtils.GenerateQRCodeTextureWithAmount(250, address, numRaw
 var sprite = Sprite.Create(texture2D, new Rect(0.0f, 0.0f, texture2D.width, texture2D.height), new Vector2(0.5f, 0.5f), 100.0f);
 ```
 ## Utility node functions
-### Send nano, waiting for confirmation from the network
+### Send Kakitu, waiting for confirmation from the network
 ```
 IEnumerator SendWaitConfHandler()
 {
@@ -124,7 +124,7 @@ IEnumerator SendWaitConfHandler()
   });
 }
 ```
-### Send nano, without waiting for confirmation from the network
+### Send Kakitu, without waiting for confirmation from the network
 ```
 private IEnumerator SendHandler()
 {
@@ -141,13 +141,13 @@ private IEnumerator SendHandler()
   });
 }
 ```
-### Receive nano, waiting for confirmation from the network
+### Receive Kakitu, waiting for confirmation from the network
 `yield return kakituManager.ReceiveWaitConf(address, pendingBlock, privateKey, (error, hash) => { }`
 
-### Receive nano, without waiting for confirmation from the network
+### Receive Kakitu, without waiting for confirmation from the network
 `yield return kakituManager.Receive(address, pendingBlock, privateKey, (error, hash) => { }`
 
-### Automatically pocket nano
+### Automatically pocket Kakitu
 ```
 kakituManager.AutomatePocketing(address, privateKey, (block) =>
   {
@@ -182,19 +182,19 @@ Process seed (as above), create & sign block locally and hand off to server.
 Server does validation (checks block is valid) then does appropriate action and send response to client.  
 
 ### To run your own test servers (recommended for production)
-Requires running a nano node, as well as `npm` and `nodejs` being installed.
-1. Run the `nano_node` binary after enabling rpc and websocket in `config-node.toml` file.
-`nano_node --daemon`
+Requires running a Kakitu node, as well as `npm` and `nodejs` being installed.
+1. Run the `kshs_node` binary after enabling rpc and websocket in `config-node.toml` file.
+`kshs_node --daemon`
 2. `cd TestServer`
 3. Modify the `config.js` settings to be applicable for your system.
 4. `npm install`
 5. `node server.js`
 
-A nano node is required to be running which the websocket & http server (for RPC requests) will communicate with. Websocket & RPC should be enabled in the `node-config.toml` nano file.   
-A http server (for RPC requests) is definitely needed for communicating with the nano node via JSON-RPC, a test nodejs script is supplied for this called `server.js`. A websocket server to receive notifications from the nano network is highly recommended to make the most use of the plugin functionality. Another test server called `websocket_node.js` listening for confirmations for blocks in real-time on the nano network. `server_work_callback.js` communicate with dpow (distributed POW) for work generation, a `work_peer` in `node-config.toml` should be set up for this, all these scripts are found in the ./TestServer subdirectory. Running `server.js` will also run `websocket_node.js` & `server_work_callback,js`. The websocket script makes 2 connections to the node, 1 is filtered output and 1 gets all websocket events (usual for visualisers). If you only need filtered output (recommended!) then disable `allow_listen_all=false` in `config.js`, this is the default.  
+A Kakitu node is required to be running which the websocket & http server (for RPC requests) will communicate with. Websocket & RPC should be enabled in the `node-config.toml` Kakitu file.
+A http server (for RPC requests) is definitely needed for communicating with the Kakitu node via JSON-RPC, a test nodejs script is supplied for this called `server.js`. A websocket server to receive notifications from the Kakitu network is highly recommended to make the most use of the plugin functionality. Another test server called `websocket_node.js` listening for confirmations for blocks in real-time on the Kakitu network. `server_work_callback.js` communicate with dpow (distributed POW) for work generation, a `work_peer` in `node-config.toml` should be set up for this, all these scripts are found in the ./TestServer subdirectory. Running `server.js` will also run `websocket_node.js` & `server_work_callback,js`. The websocket script makes 2 connections to the node, 1 is filtered output and 1 gets all websocket events (usual for visualisers). If you only need filtered output (recommended!) then disable `allow_listen_all=false` in `config.js`, this is the default.
 
 Limitations
-- The test servers should not be used in production due to lack of security/ddos protection. Likely canditates for a future version are the NanoRPCProxy.
+- The test servers should not be used in production due to lack of security/ddos protection. Likely canditates for a future version are the KakituRPCProxy.
 
-Any donation contributions are welcome: nano_15qry5fsh4mjbsgsqj148o8378cx5ext4dpnh5ex99gfck686nxkiuk9uouy
+Any donation contributions are welcome to the Kakitu Team: kshs_15qry5fsh4mjbsgsqj148o8378cx5ext4dpnh5ex99gfck686nxkiuk9uouy
 ![download](https://user-images.githubusercontent.com/650038/97703969-70d90c80-1aa9-11eb-80b6-30bfad6dce31.png)

@@ -55,25 +55,25 @@ public class KakituDemo : MonoBehaviour
   void Start()
   {
     // Initialize RPC & Websocket
-    nanoManager = gameObject.AddComponent<KakituManager>();
-    nanoManager.rpcURL = "http://95.216.164.23:28103"; // Update this url to point to your JSON-RPC server
-    nanoManager.defaultRep = defaultRep;
+    kakituManager = gameObject.AddComponent<KakituManager>();
+    kakituManager.rpcURL = "http://95.216.164.23:28103"; // Update this url to point to your JSON-RPC server
+    kakituManager.defaultRep = defaultRep;
 
-    nanoWebsocket = gameObject.AddComponent<KakituWebSocket>();
-    nanoWebsocket.url = "ws://95.216.164.23:28104"; // Update this url to point to your websocket server
-    nanoManager.Websocket = nanoWebsocket;
+    kakituWebsocket = gameObject.AddComponent<KakituWebSocket>();
+    kakituWebsocket.url = "ws://95.216.164.23:28104"; // Update this url to point to your websocket server
+    kakituManager.Websocket = kakituWebsocket;
 
     Debug.Log("Private key files located at: " + Path.Combine(Application.persistentDataPath, "Kakitu"));
 
     // Update QR codes for arcade
     arcadePrivateKey = KakituUtils.ByteArrayToHexString(KakituUtils.GeneratePrivateKey());
 
-    nanoManager.AddOnWebsocketConnectListener((bool isError, bool isReconnect) =>
+    kakituManager.AddOnWebsocketConnectListener((bool isError, bool isReconnect) =>
    {
      // Called when the connection is successfully opened (or failed), it will automatically keep trying to connect if there is a failure
      if (!isError)
      {
-       nanoManager.ListenForPaymentWaitConfirmation(KakituUtils.PrivateKeyToAddress(arcadePrivateKey), new KakituAmount("1000000000000000000000000"), true, (error) =>
+       kakituManager.ListenForPaymentWaitConfirmation(KakituUtils.PrivateKeyToAddress(arcadePrivateKey), new KakituAmount("1000000000000000000000000"), true, (error) =>
        {
          if (!error)
          {
@@ -95,7 +95,7 @@ public class KakituDemo : MonoBehaviour
      }
    });
 
-    nanoManager.AddConfirmationListener((websocketConfirmationResponse) =>
+    kakituManager.AddConfirmationListener((websocketConfirmationResponse) =>
     {
       Debug.Log("Confirmation received");
       string output = "";
@@ -113,7 +113,7 @@ public class KakituDemo : MonoBehaviour
       WebsockConfirmationResponseUI.text = output;
     });
 
-    nanoManager.AddFilteredConfirmationListener((websocketConfirmationResponse) =>
+    kakituManager.AddFilteredConfirmationListener((websocketConfirmationResponse) =>
     {
       Debug.Log("Confirmation received");
     });
@@ -150,7 +150,7 @@ public class KakituDemo : MonoBehaviour
 
     List<PendingBlock> pendingBlocks = null;
     var arcadeAddress = KakituUtils.PrivateKeyToAddress(arcadePrivateKey);
-    yield return nanoManager.PendingBlocks(arcadeAddress, (responsePendingBlocks) =>
+    yield return kakituManager.PendingBlocks(arcadeAddress, (responsePendingBlocks) =>
     {
       pendingBlocks = responsePendingBlocks;
     });
@@ -160,7 +160,7 @@ public class KakituDemo : MonoBehaviour
     {
       // Returns the one with the highest amount
       var pendingBlock = pendingBlocks[0];
-      yield return nanoManager.ReceiveWaitConf(arcadeAddress, pendingBlock, arcadePrivateKey, (error, hash) =>
+      yield return kakituManager.ReceiveWaitConf(arcadeAddress, pendingBlock, arcadePrivateKey, (error, hash) =>
       {
         if (!error)
         {
@@ -170,7 +170,7 @@ public class KakituDemo : MonoBehaviour
 
           // Start the payout listener
           var expirySecs = 30;
-          nanoManager.ListenForPayoutWaitConfirmation(arcadeAddress, expirySecs, (errorPayout) =>
+          kakituManager.ListenForPayoutWaitConfirmation(arcadeAddress, expirySecs, (errorPayout) =>
           {
             if (!errorPayout)
             {
@@ -251,13 +251,13 @@ public class KakituDemo : MonoBehaviour
   {
     // First we get the frontier
     string previous = null;
-    yield return nanoManager.AccountFrontier(address, (hash) =>
+    yield return kakituManager.AccountFrontier(address, (hash) =>
    {
      previous = hash;
    });
 
     // If this is an open block, then we want to generate work for the account public key
-    yield return nanoManager.WorkGenerate(address, previous, (work) =>
+    yield return kakituManager.WorkGenerate(address, previous, (work) =>
  {
    LastWorkUI.text = work;
  }
@@ -280,7 +280,7 @@ public class KakituDemo : MonoBehaviour
     // First we get the frontier
     string previous = null;
     string rep = null;
-    yield return nanoManager.AccountInfo(address, (accountInfo) =>
+    yield return kakituManager.AccountInfo(address, (accountInfo) =>
     {
       previous = accountInfo.frontier;
       rep = accountInfo.representative;
@@ -290,8 +290,8 @@ public class KakituDemo : MonoBehaviour
     {
       // Create the block to send
       var newBalance = currentBalance - new KakituAmount(System.Numerics.BigInteger.Parse("1000000000000000000000000"));
-      var block = nanoManager.CreateBlock(address, KakituUtils.HexStringToByteArray(privateKey), newBalance, KakituUtils.PrivateKeyToPublicKeyHexString(watcherPrivateKey), previous, rep, LastWorkUI.text);
-      yield return nanoManager.Process(block, BlockType.send, (hash) =>
+      var block = kakituManager.CreateBlock(address, KakituUtils.HexStringToByteArray(privateKey), newBalance, KakituUtils.PrivateKeyToPublicKeyHexString(watcherPrivateKey), previous, rep, LastWorkUI.text);
+      yield return kakituManager.Process(block, BlockType.send, (hash) =>
      {
        if (hash != null)
        {
@@ -322,14 +322,14 @@ public class KakituDemo : MonoBehaviour
     // First we get the frontier
     string previous = null;
     string rep = null;
-    yield return nanoManager.AccountInfo(address, (accountInfo) =>
+    yield return kakituManager.AccountInfo(address, (accountInfo) =>
     {
       previous = accountInfo.frontier;
       rep = accountInfo.representative;
     });
 
     List<PendingBlock> pendingBlocks = null;
-    yield return nanoManager.PendingBlocks(address, (responsePendingBlocks) =>
+    yield return kakituManager.PendingBlocks(address, (responsePendingBlocks) =>
     {
       pendingBlocks = responsePendingBlocks;
     });
@@ -341,8 +341,8 @@ public class KakituDemo : MonoBehaviour
 
       // Create the block to receive
       var newBalance = currentBalance + pendingBlock.amount;
-      var block = nanoManager.CreateBlock(address, KakituUtils.HexStringToByteArray(privateKey), newBalance, pendingBlock.source, previous, rep != null ? rep : defaultRep, LastWorkUI.text);
-      yield return nanoManager.Process(block, previous == null ? BlockType.open : BlockType.receive, (hash) =>
+      var block = kakituManager.CreateBlock(address, KakituUtils.HexStringToByteArray(privateKey), newBalance, pendingBlock.source, previous, rep != null ? rep : defaultRep, LastWorkUI.text);
+      yield return kakituManager.Process(block, previous == null ? BlockType.open : BlockType.receive, (hash) =>
       {
         if (hash != null)
         {
@@ -365,7 +365,7 @@ public class KakituDemo : MonoBehaviour
 
   private IEnumerator SendHandler()
   {
-    yield return nanoManager.Send(KakituUtils.PrivateKeyToAddress(watcherPrivateKey), new KakituAmount("1000000000000000000000000"), privateKey, (error, hash) =>
+    yield return kakituManager.Send(KakituUtils.PrivateKeyToAddress(watcherPrivateKey), new KakituAmount("1000000000000000000000000"), privateKey, (error, hash) =>
     {
       if (!error)
       {
@@ -386,7 +386,7 @@ public class KakituDemo : MonoBehaviour
   private IEnumerator ReceiveHandler()
   {
     List<PendingBlock> pendingBlocks = null;
-    yield return nanoManager.PendingBlocks(address, (responsePendingBlocks) =>
+    yield return kakituManager.PendingBlocks(address, (responsePendingBlocks) =>
     {
       pendingBlocks = responsePendingBlocks;
     });
@@ -395,7 +395,7 @@ public class KakituDemo : MonoBehaviour
     if (pendingBlocks != null && pendingBlocks.Count > 0)
     {
       var pendingBlock = pendingBlocks[0];
-      yield return nanoManager.Receive(address, pendingBlock, privateKey, (error, callback) =>
+      yield return kakituManager.Receive(address, pendingBlock, privateKey, (error, callback) =>
       {
       });
     }
@@ -412,8 +412,8 @@ public class KakituDemo : MonoBehaviour
 
   IEnumerator SendWaitConfHandler()
   {
-    var amount = new KakituAmount(KakituUtils.NanoToRaw("0.000001"));
-    yield return nanoManager.SendWaitConf(KakituUtils.PrivateKeyToAddress(watcherPrivateKey), amount, privateKey, (error, hash) =>
+    var amount = new KakituAmount(KakituUtils.KshsToRaw("0.000001"));
+    yield return kakituManager.SendWaitConf(KakituUtils.PrivateKeyToAddress(watcherPrivateKey), amount, privateKey, (error, hash) =>
     {
       if (!error)
       {
@@ -434,7 +434,7 @@ public class KakituDemo : MonoBehaviour
   IEnumerator ReceiveWaitConfHandler()
   {
     List<PendingBlock> pendingBlocks = null;
-    yield return nanoManager.PendingBlocks(address, (responsePendingBlocks) =>
+    yield return kakituManager.PendingBlocks(address, (responsePendingBlocks) =>
     {
       pendingBlocks = responsePendingBlocks;
     });
@@ -443,7 +443,7 @@ public class KakituDemo : MonoBehaviour
     if (pendingBlocks != null && pendingBlocks.Count > 0)
     {
       var pendingBlock = pendingBlocks[0];
-      yield return nanoManager.ReceiveWaitConf(address, pendingBlock, privateKey, (error, hash) =>
+      yield return kakituManager.ReceiveWaitConf(address, pendingBlock, privateKey, (error, hash) =>
     {
       if (!error)
       {
@@ -463,7 +463,7 @@ public class KakituDemo : MonoBehaviour
 
   void OnClickAutomatePocketing()
   {
-    nanoManager.AutomatePocketing(address, privateKey, (block) =>
+    kakituManager.AutomatePocketing(address, privateKey, (block) =>
     {
       Debug.Log("Automatically pocketed");
     });
@@ -471,23 +471,23 @@ public class KakituDemo : MonoBehaviour
 
   void OnClickUnautomatePocketing()
   {
-    nanoManager.UnautomatePocketing(address);
+    kakituManager.UnautomatePocketing(address);
   }
 
   void OnClickListenAllConfirmations()
   {
-    nanoManager.ListenAllConfirmations();
+    kakituManager.ListenAllConfirmations();
   }
 
   void OnClickUnlistenAllConfirmations()
   {
-    nanoManager.UnlistenAllConfirmations();
+    kakituManager.UnlistenAllConfirmations();
   }
 
   private int lastWatcherId = 0;
   void OnClickWatch()
   {
-    lastWatcherId = nanoManager.Watch(KakituUtils.PrivateKeyToAddress(watcherPrivateKey), (watcherInfo) =>
+    lastWatcherId = kakituManager.Watch(KakituUtils.PrivateKeyToAddress(watcherPrivateKey), (watcherInfo) =>
     {
       WatchedUI.text = watcherInfo.hash;
     });
@@ -495,7 +495,7 @@ public class KakituDemo : MonoBehaviour
 
   void OnClickUnwatch()
   {
-    nanoManager.Unwatch(KakituUtils.PrivateKeyToAddress(watcherPrivateKey), lastWatcherId);
+    kakituManager.Unwatch(KakituUtils.PrivateKeyToAddress(watcherPrivateKey), lastWatcherId);
   }
 
   // Update is called once per frame
@@ -512,7 +512,7 @@ public class KakituDemo : MonoBehaviour
     time += Time.deltaTime;
     if (time >= updateTimer)
     {
-      yield return nanoManager.Balance(address, (balance, pending) =>
+      yield return kakituManager.Balance(address, (balance, pending) =>
       {
         if (balance != null)
         {
@@ -527,5 +527,5 @@ public class KakituDemo : MonoBehaviour
   }
 
   private KakituWebSocket kakituWebsocket;
-  private KakituManager nanoManager;
+  private KakituManager kakituManager;
 }

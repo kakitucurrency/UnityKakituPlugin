@@ -68,7 +68,7 @@ namespace KakituPlugin
     }
 
     /**
-     * Returns the value of this amount in the standard base unit ({@link NanoUnit#BASE_UNIT}).
+     * Returns the value of this amount in the standard base unit ({@link KakituUnit#BASE_UNIT}).
      *
      * @return the value, in the base unit
      */

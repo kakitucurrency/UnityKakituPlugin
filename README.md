@@ -1,7 +1,7 @@
 # KakituPlugin
 Plugin for integrating the Kakitu cryptocurrency into Unity.  
 
-Available on the [Unity asset store](https://assetstore.unity.com/packages/tools/integration/nano-190960)  
+Available on the [Unity asset store](https://assetstore.unity.com/packages/tools/integration/kakitu)
 
 Tested on Windows/Linux/MacOS/Android/iOS/HTML with Unity 2020.3.2f1
 
@@ -16,8 +16,8 @@ The easiest way to get started is to open up the scene in Scenes/SampleScene.uni
 `KakituUtils.cs` contains various generic functions such as creating seeds, encrypting/decrypting them using AES with a password, converting to accounts, converting between Raw and KSHS and various other things.  
 `KakituWebsocket.cs` maintains the websocket connection to the proxies.  
 `KakituManager.cs` is where all other functionality is located  
-`KakituAmount.cs` is a helper class for storing and manipulating the raw units in Nano  
-`RPC.cs` connects to a server forward proxy for the nano node  
+`KakituAmount.cs` is a helper class for storing and manipulating the raw units in Kakitu (KSHS)
+`RPC.cs` connects to a server forward proxy for the Kakitu node
 
 `KakituDemo.cs` contains content for the sample scene which illustrates all the functionality available.  
 `TestUtils.cs` contains test for various things.  
@@ -38,7 +38,7 @@ public class KakituDemo : MonoBehaviour
 
     kakituWebsocket = gameObject.AddComponent<KakituWebSocket>();
     kakituWebsocket.url = "ws://95.216.164.23:28104"; // Modify url to websocket server host:port
-    kakituManager.Websocket = nanoWebsocket;
+    kakituManager.Websocket = kakituWebsocket;
   }
 
   private KakituWebSocket websocket;

@@ -45,11 +45,11 @@ namespace KakituPlugin
     /**
      * Checks if the kshs string is valid.
      *
-     * @param nanoStr the raw value
+     * @param kshsStr the raw value
      */
-    public static bool ValidateKshs(string nano)
+    public static bool ValidateKshs(string kshs)
     {
-      if (nano.Length > 40 || nano.Length == 0)
+      if (kshs.Length > 40 || kshs.Length == 0)
       {
         return false;
       }
@@ -58,9 +58,9 @@ namespace KakituPlugin
       var error = false;
       var num_decimal_points = 0;
       var decimal_point_index = -1;
-      for (var i = 0; i < nano.Length; ++i)
+      for (var i = 0; i < kshs.Length; ++i)
       {
-        var c = nano[i];
+        var c = kshs[i];
         if (!Char.IsDigit(c))
         {
           if (c.Equals('.') || c.Equals(','))
@@ -84,16 +84,16 @@ namespace KakituPlugin
       if (decimal_point_index == -1)
       {
         // There is no decimal and it contains only digits
-        var as_int = Int32.Parse(nano);
+        var as_int = Int32.Parse(kshs);
         return as_int <= 340282366;  // This is the maximum amount of Kakitu there is
       }
       else
       {
         // Split the string
-        var arr = nano.Split('.');
+        var arr = kshs.Split('.');
         if (arr.Length != 2 || arr[0].Length > 9)
         {
-          arr = nano.Split(',');
+          arr = kshs.Split(',');
           if (arr.Length != 2 || arr[0].Length > 9)
           {
             return false;

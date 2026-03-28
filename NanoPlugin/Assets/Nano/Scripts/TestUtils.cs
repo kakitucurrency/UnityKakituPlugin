@@ -9,45 +9,45 @@ public class TestUtils : MonoBehaviour
   void Start()
   {
     // Validate kshs/raw functions
-    if (!KakituUtils.ValidateNano("100.123"))
+    if (!KakituUtils.ValidateKshs("100.123"))
     {
       Debug.Log("Error validating kshs");
       return;
     }
 
-    if (!KakituUtils.ValidateNano("100,123"))
+    if (!KakituUtils.ValidateKshs("100,123"))
     {
       Debug.Log("Error validating kshs");
       return;
     }
 
-    if (!KakituUtils.ValidateNano("340282366.920938463463374607431768211455"))
+    if (!KakituUtils.ValidateKshs("340282366.920938463463374607431768211455"))
     {
       Debug.Log("Error validating kshs");
       return;
     }
 
-    if (!KakituUtils.ValidateNano("0.1231231"))
+    if (!KakituUtils.ValidateKshs("0.1231231"))
     {
       Debug.Log("Error validating kshs");
       return;
     }
 
-    if (!KakituUtils.ValidateNano(".1223"))
+    if (!KakituUtils.ValidateKshs(".1223"))
     {
       Debug.Log("Error validating kshs");
       return;
     }
 
-    if (!KakituUtils.ValidateNano(",1223"))
+    if (!KakituUtils.ValidateKshs(",1223"))
     {
       Debug.Log("Error validating kshs");
       return;
     }
 
-    if (KakituUtils.ValidateNano(".122.3"))
+    if (KakituUtils.ValidateKshs(".122.3"))
     {
-      Debug.Log("Error validating nano, 2 decimal points");
+      Debug.Log("Error validating kshs, 2 decimal points");
       return;
     }
 
@@ -94,9 +94,9 @@ public class TestUtils : MonoBehaviour
       return;
     }
 
-    // Raw to nano
+    // Raw to kshs
     var raw = "10000000000000000000000000000000";
-    var kshs = KakituUtils.RawToNano(raw);
+    var kshs = KakituUtils.RawToKshs(raw);
     if (!kshs.Equals("10.0"))
     {
       Debug.Log("Error converting raw to kshs");
@@ -104,7 +104,7 @@ public class TestUtils : MonoBehaviour
     }
 
     raw = "1000000000000000000000000000000";
-    kshs = KakituUtils.RawToNano(raw);
+    kshs = KakituUtils.RawToKshs(raw);
     if (!kshs.Equals("1.0"))
     {
       Debug.Log("Error converting raw to kshs");
@@ -112,7 +112,7 @@ public class TestUtils : MonoBehaviour
     }
 
     raw = "100000000000000000000000000000";
-    kshs = KakituUtils.RawToNano(raw);
+    kshs = KakituUtils.RawToKshs(raw);
     if (!kshs.Equals("0.1"))
     {
       Debug.Log("Error converting raw to kshs");
@@ -120,7 +120,7 @@ public class TestUtils : MonoBehaviour
     }
 
     raw = "10000000000000000000000000000";
-    kshs = KakituUtils.RawToNano(raw);
+    kshs = KakituUtils.RawToKshs(raw);
     if (!kshs.Equals("0.01"))
     {
       Debug.Log("Error converting raw to kshs");
@@ -128,7 +128,7 @@ public class TestUtils : MonoBehaviour
     }
 
     raw = "100000000000000000000000000";
-    kshs = KakituUtils.RawToNano(raw);
+    kshs = KakituUtils.RawToKshs(raw);
     if (!kshs.Equals("0.0001"))
     {
       Debug.Log("Error converting raw to kshs");
@@ -136,7 +136,7 @@ public class TestUtils : MonoBehaviour
     }
 
     raw = "100";
-    kshs = KakituUtils.RawToNano(raw);
+    kshs = KakituUtils.RawToKshs(raw);
     if (!kshs.Equals("0.0000000000000000000000000001"))
     {
       Debug.Log("Error converting raw to kshs");
@@ -144,16 +144,16 @@ public class TestUtils : MonoBehaviour
     }
 
     raw = "1";
-    kshs = KakituUtils.RawToNano(raw);
+    kshs = KakituUtils.RawToKshs(raw);
     if (!kshs.Equals("0.000000000000000000000000000001"))
     {
       Debug.Log("Error converting raw to kshs");
       return;
     }
 
-    // Nano to raw
+    // Kshs to raw
     kshs = "10.0";
-    raw = KakituUtils.NanoToRaw(nano);
+    raw = KakituUtils.KshsToRaw(kshs);
     if (!raw.Equals("10000000000000000000000000000000"))
     {
       Debug.Log("Error converting kshs to raw");
@@ -161,7 +161,7 @@ public class TestUtils : MonoBehaviour
     }
 
     kshs = "10";
-    raw = KakituUtils.NanoToRaw(nano);
+    raw = KakituUtils.KshsToRaw(kshs);
     if (!raw.Equals("10000000000000000000000000000000"))
     {
       Debug.Log("Error converting kshs to raw");
@@ -169,7 +169,7 @@ public class TestUtils : MonoBehaviour
     }
 
     kshs = "1.0";
-    raw = KakituUtils.NanoToRaw(nano);
+    raw = KakituUtils.KshsToRaw(kshs);
     if (!raw.Equals("1000000000000000000000000000000"))
     {
       Debug.Log("Error converting kshs to raw");
@@ -177,7 +177,7 @@ public class TestUtils : MonoBehaviour
     }
 
     kshs = "0.1";
-    raw = KakituUtils.NanoToRaw(nano);
+    raw = KakituUtils.KshsToRaw(kshs);
     if (!raw.Equals("100000000000000000000000000000"))
     {
       Debug.Log("Error converting kshs to raw");
@@ -185,7 +185,7 @@ public class TestUtils : MonoBehaviour
     }
 
     kshs = ".1";
-    raw = KakituUtils.NanoToRaw(nano);
+    raw = KakituUtils.KshsToRaw(kshs);
     if (!raw.Equals("100000000000000000000000000000"))
     {
       Debug.Log("Error converting kshs to raw");
@@ -193,7 +193,7 @@ public class TestUtils : MonoBehaviour
     }
 
     kshs = "00000.1";
-    raw = KakituUtils.NanoToRaw(nano);
+    raw = KakituUtils.KshsToRaw(kshs);
     if (!raw.Equals("100000000000000000000000000000"))
     {
       Debug.Log("Error converting kshs to raw");
@@ -201,7 +201,7 @@ public class TestUtils : MonoBehaviour
     }
 
     kshs = "0.01";
-    raw = KakituUtils.NanoToRaw(nano);
+    raw = KakituUtils.KshsToRaw(kshs);
     if (!raw.Equals("10000000000000000000000000000"))
     {
       Debug.Log("Error converting kshs to raw");
@@ -209,7 +209,7 @@ public class TestUtils : MonoBehaviour
     }
 
     kshs = "0.000000000000000000000000000001";
-    raw = KakituUtils.NanoToRaw(nano);
+    raw = KakituUtils.KshsToRaw(kshs);
     if (!raw.Equals("1"))
     {
       Debug.Log("Error converting kshs to raw");
@@ -218,7 +218,7 @@ public class TestUtils : MonoBehaviour
 
     // Test localization of using a comma
     kshs = "0,01";
-    raw = KakituUtils.NanoToRaw(nano);
+    raw = KakituUtils.KshsToRaw(kshs);
     if (!raw.Equals("10000000000000000000000000000"))
     {
       Debug.Log("Error converting kshs to raw");

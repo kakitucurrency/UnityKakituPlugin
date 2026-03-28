@@ -26,7 +26,7 @@ config.node.rpc.port = 7076; // port 55000 for beta
 
 // DPOW credentials if you have them.
 // Otherwise work_generate will use the node, this will take a while if using the CPU (especially on VPS).
-// Use a GPU with the node or delegate to a work server with a GPU (see nano_work_server).
+// Use a GPU with the node or delegate to a work server with a GPU (see kshs_work_server).
 config.dpow = {};
 config.dpow.enabled = false;
 config.dpow.user = "<your_username>";

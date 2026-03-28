@@ -60,7 +60,7 @@
     <Compile Include="Assets\Plugins\Kakitu\KakituWebSocket.cs" />
     <Compile Include="Assets\Plugins\Kakitu\KakituUtils.cs" />
     <Compile Include="Assets\Plugins\Kakitu\KakituAmount.cs" />
-    <Compile Include="Assets\Plugins\Nano\RPC.cs" />
+    <Compile Include="Assets\Plugins\Kakitu\RPC.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
